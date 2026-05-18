@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity // Para decirle a Spring que esta clase de Java será una tabla en PostgreSQL.
 @Table(name = "usuarios") // Forzar a que la tabla se llame "usuarios" en minúscula.
@@ -28,6 +30,12 @@ public class Usuario {
 
     @Column(name = "fecha_registro", updatable = false)
     private LocalDateTime fechaRegistro;
+
+    // mappedBy = "usuario".
+    // cascade = CascadeType.ALL -> significa que si borramos al usuario, se borran sus carteras.
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cartera> carteras = new ArrayList<>();
+    
 
     // Se ejecuta automáticamente justo antes de guardar el usuario por primera vez en la BD.
     @PrePersist
@@ -72,5 +80,12 @@ public class Usuario {
     }
     public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
+    }
+
+    public List<Cartera> getCarteras() { 
+        return carteras;
+    }
+    public void setCarteras(List<Cartera> carteras) { 
+        this.carteras = carteras; 
     }
 }

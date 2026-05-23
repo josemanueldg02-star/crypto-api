@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "carteras")
@@ -31,6 +33,10 @@ public class Cartera {
     @JsonIgnore
     private Usuario usuario;
 
+    @OneToMany(mappedBy = "cartera", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaccion> transacciones = new ArrayList<>();
+
+
     @PrePersist
     protected void onCreate() {
         this.fechaCreacion = LocalDateTime.now();
@@ -53,11 +59,14 @@ public class Cartera {
     public void setSimboloMoneda(String simboloMoneda) { this.simboloMoneda = simboloMoneda; }
     
     public Double getSaldo() { return saldo; }
-    public void SetSaldo(Double saldo) { this.saldo = saldo; }
+    public void setSaldo(Double saldo) { this.saldo = saldo; }
 
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
 
     public Usuario getUsuario() { return usuario; }
-    public void SetUsuario(Usuario usuario) { this.usuario = usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+
+    public List<Transaccion> getTransacciones() { return transacciones; }
+    public void setTransacciones(List<Transaccion> transacciones) { this.transacciones = transacciones; }
 }
 

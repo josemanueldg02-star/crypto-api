@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Arrays;
+
 @Service
 public class TransaccionService {
 
@@ -44,5 +47,42 @@ public class TransaccionService {
         
         // 5. Guardamos y devolvemos la transacción
         return transaccionRepository.save(recibo);
+    }
+
+    @Transactional
+    public List<Transaccion> comprarCripto(Long usuarioId, String monedaOrigen, String monedaDestino, Double cantidadGasto) {
+
+        // 1. Localizamos ambas carteras del usuario en la base de datos.
+        Cartera carteraOrigen = carteraRepository.findByUsuarioIdAndSimboloMoneda(usuarioId, monedaOrigen)
+        .orElseThrow(() -> new RuntimeException("Cartera origen no encontrada: " + monedaOrigen));
+
+        Cartera carteraDestino = carteraRepository.findByUsuarioIdAndSimboloMoneda(usuarioId, monedaDestino)
+        .orElseThrow(() -> new RuntimeException("Cartera destino no encontrada: " + monedaDestino));
+
+        // 2. Auditoria de fondos: ¿Tiene dinero suficiente?
+        if (carteraOrigen.getSaldo() < cantidadGasto) {
+            throw new RuntimeException("Saldo insuficiente en la cartera de " + monedaOrigen);
+        }
+
+        // 3. El Motor de Cambio (Tipo de cambio simulado temporalmente a 60.000€ = 1 BTC).
+        double precioSimuladoBTC = 60000.0;
+        double cantidadObtenida = cantidadGasto / precioSimuladoBTC;
+
+        // 4. Ejecutamos el movimiento de capital.
+        carteraOrigen.setSaldo(carteraOrigen.getSaldo() - cantidadGasto);
+        carteraDestino.setSaldo(carteraDestino.getSaldo() + cantidadObtenida);
+
+        carteraRepository.save(carteraOrigen);
+        carteraRepository.save(carteraDestino);
+
+        // 5. Generamos la doble auditoría (El rastro del dinero).
+        Transaccion reciboSalida = new Transaccion("COMPRA_SALIDA", -cantidadGasto, monedaOrigen, carteraOrigen);
+        Transaccion reciboEntrada = new Transaccion("COMPRA_ENTRADA", cantidadObtenida, monedaDestino, carteraDestino);
+
+        transaccionRepository.save(reciboSalida);
+        transaccionRepository.save(reciboEntrada);
+
+        // Devolvemos ambos recibos al usuario.
+        return Arrays.asList(reciboSalida, reciboEntrada);
     }
 }

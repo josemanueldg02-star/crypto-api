@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/transacciones")
@@ -33,5 +34,24 @@ public class TransaccionController {
 
             Transaccion deposito = transaccionService.depositarFondos(carteraId, cantidad);
             return new ResponseEntity<>(deposito, HttpStatus.CREATED);
+        }
+
+    // Endpoint para comprar criptos.
+    // POST http://localhost:8080/api/transacciones/comprar/usuario/{usuarioId})
+    @PostMapping("/comprar/usuario/{usuarioId}")
+    public ResponseEntity<List<Transaccion>> comprarCriptomoneda(
+        @PathVariable Long usuarioId,
+        @RequestBody Map<String, Object> body) {
+
+            // Extraemos los datos del JSON
+            String monedaOrigen = (String) body.get("monedaOrigen");
+            String monedaDestino = (String) body.get("monedaDestino");
+
+            // Convertimos a Double de forma segura por si llega como entero desde el JSON.
+            Double cantidad = Double.valueOf(body.get("cantidad").toString());
+
+            List<Transaccion> recibos = transaccionService.comprarCripto(usuarioId, monedaOrigen, monedaDestino, cantidad);
+
+            return new ResponseEntity<>(recibos, HttpStatus.OK);
         }
 }

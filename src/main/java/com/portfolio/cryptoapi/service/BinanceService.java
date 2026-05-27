@@ -6,7 +6,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @Service
-public class BinanceServie {
+public class BinanceService {
 
     // URL pública de Binance para consultar el precio de cotización.
     private static final String BINANCE_API_URL = "https://api.binance.com/api/v3/ticker/price?symbol=";

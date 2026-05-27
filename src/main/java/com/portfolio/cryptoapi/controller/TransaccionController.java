@@ -1,6 +1,6 @@
 package com.portfolio.cryptoapi.controller;
 
-// iMPORTS
+//IMPORTS
 import com.portfolio.cryptoapi.model.Transaccion;
 import com.portfolio.cryptoapi.service.TransaccionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/transacciones")
@@ -22,36 +22,39 @@ public class TransaccionController {
         this.transaccionService = transaccionService;
     }
 
-    // Endpoint para depositar fondos (dinero simulado) en una cartera específica
-    // POST http://localhost:8080/api/transacciones/deposito/cartera/{carteraId}
     @PostMapping("/deposito/cartera/{carteraId}")
-    public ResponseEntity<Transaccion> realizarDeposito(
-        @PathVariable Long carteraId,
-        @RequestBody Map<String, Double> body) {
+    public ResponseEntity<Transaccion> realizarDeposito(@PathVariable Long carteraId, @RequestBody Map<String, Double> body) {
+        Double cantidad = body.get("cantidad");
+        Transaccion deposito = transaccionService.depositarFondos(carteraId, cantidad);
+        return new ResponseEntity<>(deposito, HttpStatus.CREATED);
+    }
 
-            // Extraemos la cantidad del cuerpo de la petición JSON.
-            Double cantidad = body.get("cantidad");
+    // --- ENDPOINT PARA RETIRAR DINERO AL BANCO ---
+    @PostMapping("/retiro/cartera/{carteraId}")
+    public ResponseEntity<Transaccion> realizarRetiro(@PathVariable Long carteraId, @RequestBody Map<String, Double> body) {
+        Double cantidad = body.get("cantidad");
+        Transaccion retiro = transaccionService.retirarFondos(carteraId, cantidad);
+        return new ResponseEntity<>(retiro, HttpStatus.OK);
+    }
 
-            Transaccion deposito = transaccionService.depositarFondos(carteraId, cantidad);
-            return new ResponseEntity<>(deposito, HttpStatus.CREATED);
-        }
-
-    // Endpoint para comprar criptos.
-    // POST http://localhost:8080/api/transacciones/comprar/usuario/{usuarioId})
     @PostMapping("/comprar/usuario/{usuarioId}")
-    public ResponseEntity<List<Transaccion>> comprarCriptomoneda(
-        @PathVariable Long usuarioId,
-        @RequestBody Map<String, Object> body) {
+    public ResponseEntity<List<Transaccion>> comprarCriptomoneda(@PathVariable Long usuarioId, @RequestBody Map<String, Object> body) {
+        String monedaOrigen = (String) body.get("monedaOrigen");
+        String monedaDestino = (String) body.get("monedaDestino");
+        Double cantidad = Double.valueOf(body.get("cantidad").toString());
+        
+        List<Transaccion> recibos = transaccionService.comprarCripto(usuarioId, monedaOrigen, monedaDestino, cantidad);
+        return new ResponseEntity<>(recibos, HttpStatus.OK); 
+    }
 
-            // Extraemos los datos del JSON
-            String monedaOrigen = (String) body.get("monedaOrigen");
-            String monedaDestino = (String) body.get("monedaDestino");
-
-            // Convertimos a Double de forma segura por si llega como entero desde el JSON.
-            Double cantidad = Double.valueOf(body.get("cantidad").toString());
-
-            List<Transaccion> recibos = transaccionService.comprarCripto(usuarioId, monedaOrigen, monedaDestino, cantidad);
-
-            return new ResponseEntity<>(recibos, HttpStatus.OK);
-        }
+    // --- ENDPOINT PARA VENDER CRIPTOMONEDAS ---
+    @PostMapping("/vender/usuario/{usuarioId}")
+    public ResponseEntity<List<Transaccion>> venderCriptomoneda(@PathVariable Long usuarioId, @RequestBody Map<String, Object> body) {
+        String monedaOrigen = (String) body.get("monedaOrigen");
+        String monedaDestino = (String) body.get("monedaDestino");
+        Double cantidad = Double.valueOf(body.get("cantidad").toString());
+        
+        List<Transaccion> recibos = transaccionService.venderCripto(usuarioId, monedaOrigen, monedaDestino, cantidad);
+        return new ResponseEntity<>(recibos, HttpStatus.OK); 
+    }
 }

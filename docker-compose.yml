@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: crypto_db_container
+    environment:
+      POSTGRES_DB: crypto_portfolio
+      POSTGRES_USER: jmdg
+      POSTGRES_PASSWORD: IAMtheBesT12!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: crypto_api_container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/crypto_portfolio
+      - SPRING_DATASOURCE_USERNAME=jmdg
+      - SPRING_DATASOURCE_PASSWORD=IAMtheBesT12!
+
+volumes:
+  postgres_data:

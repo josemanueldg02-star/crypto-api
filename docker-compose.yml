@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: crypto_portfolio
       POSTGRES_USER: jmdg
-      POSTGRES_PASSWORD: IAMtheBesT12!
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -23,7 +23,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/crypto_portfolio
       - SPRING_DATASOURCE_USERNAME=jmdg
-      - SPRING_DATASOURCE_PASSWORD=IAMtheBesT12!
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
 
 volumes:
   postgres_data:

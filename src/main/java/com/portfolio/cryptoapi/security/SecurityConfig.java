@@ -1,9 +1,11 @@
 package com.portfolio.cryptoapi.security;
 
-//IMPORTS
+// IMPORTS
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod; // NUEVO IMPORT
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer; // NUEVO IMPORT
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,13 +31,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Desactivamos protección de formularios web (somos una API)
+            .cors(Customizer.withDefaults()) // <-- NUEVO: El guardaespaldas permite las negociaciones CORS (@CrossOrigin)
+            .csrf(csrf -> csrf.disable()) 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login").permitAll() // La puerta de la recepción está abierta para todos
-                .anyRequest().authenticated() // Para todo lo demás, EXIGIMOS LA TARJETA LLAVE
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // <-- NUEVO: Dejamos pasar al "mensajero fantasma" de los navegadores
+                .requestMatchers("/api/auth/login").permitAll() 
+                .requestMatchers("/api/carteras/**").permitAll() // <-- NUEVO: PASE VIP TEMPORAL para poder maquetar en React
+                .anyRequest().authenticated() 
             )
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // El hotel no recuerda a nadie, solo confía en el Token
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Ponemos a nuestro recepcionista en la puerta
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) 
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); 
 
         return http.build();
     }
@@ -45,7 +50,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         UserDetails admin = User.builder()
             .username("josemanuel")
-            .password("{noop}admin123") // El {noop} le dice a Spring que por ahora no encriptaremos la contraseña
+            .password("{noop}admin123") 
             .roles("ADMIN")
             .build();
         

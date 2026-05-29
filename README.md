@@ -1,4 +1,4 @@
-# 🚀 Crypto Exchange REST API
+# Crypto Exchange REST API
 
 ![Java](https://img.shields.io/badge/Java-17+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
@@ -8,7 +8,7 @@
 
 Una API RESTful robusta y segura que simula el motor central (backend) de una plataforma de intercambio de criptomonedas (Exchange). Permite a los usuarios gestionar carteras de dinero fiat y criptomonedas, interactuando con precios reales del mercado.
 
-## 🌟 Características Principales
+## Características Principales
 
 * **Seguridad Avanzada (Spring Security + JWT):** Sistema de autenticación *stateless* basado en JSON Web Tokens. Rutas protegidas mediante filtros de autorización en cada petición.
 * **Integración con Mercado Real:** Conexión con la API pública de **Binance** mediante `RestTemplate` para obtener el tipo de cambio en tiempo real al ejecutar operaciones de compra/venta.
@@ -16,7 +16,7 @@ Una API RESTful robusta y segura que simula el motor central (backend) de una pl
 * **Manejo Global de Excepciones:** Respuestas de error estandarizadas e interceptadas a través de `@ControllerAdvice`, ofreciendo JSON limpios y códigos HTTP adecuados (ej. `400 Bad Request` por saldo insuficiente).
 * **Arquitectura Limpia:** Estructura multicapa (Controller, Service, Repository, Model, Security, Exception) facilitando la escalabilidad y el mantenimiento.
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 * **Lenguaje:** Java 17
 * **Framework:** Spring Boot 3
@@ -25,19 +25,19 @@ Una API RESTful robusta y segura que simula el motor central (backend) de una pl
 * **Ciberseguridad:** Spring Security, io.jsonwebtoken (JWT)
 * **Peticiones HTTP Externas:** RestTemplate
 
-## 📖 Endpoints Principales
+## Endpoints Principales
 
 ### 🔐 Autenticación
 | Método | Ruta | Descripción | Seguridad |
 |---|---|---|---|
 | `POST` | `/api/auth/login` | Inicia sesión y devuelve el Token JWT | Público |
 
-### 💼 Gestión de Carteras
+### Gestión de Carteras
 | Método | Ruta | Descripción | Seguridad |
 |---|---|---|---|
 | `GET` | `/api/carteras/usuario/{id}` | Lista los balances (Fiat/Cripto) de un usuario | Requiere JWT |
 
-### 💱 Motor Financiero
+### Motor Financiero
 | Método | Ruta | Descripción | Seguridad |
 |---|---|---|---|
 | `POST` | `/api/transacciones/deposito/cartera/{id}` | Inyecta dinero fiat desde el banco | Requiere JWT |
@@ -47,7 +47,7 @@ Una API RESTful robusta y segura que simula el motor central (backend) de una pl
 
 *(Nota: En todas las rutas protegidas, es necesario enviar la cabecera `Authorization: Bearer <token>`)*
 
-## 🚀 Instalación y Despliegue Local
+## Instalación y Despliegue Local
 
 1. **Clonar el repositorio:**
    ```bash

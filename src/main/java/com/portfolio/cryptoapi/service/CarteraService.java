@@ -39,4 +39,13 @@ public class CarteraService {
     public List<Cartera> obtenerCarterasDeUsuario(Long usuarioId) {
         return carteraRepository.findByUsuarioId(usuarioId);
     }
+
+    public Cartera modificarSaldo(Long usuarioId, String simboloMoneda, Double monto) {
+        Cartera cartera = carteraRepository.findByUsuarioIdAndSimboloMoneda(usuarioId, simboloMoneda)
+        .orElseThrow(() -> new RuntimeException("Cartera no encontrada para el usuario y moneda especificados"));
+
+        Double saldoActual = cartera.getSaldo() != null ? cartera.getSaldo() : 0.0;
+        cartera.setSaldo(saldoActual + monto);
+        return carteraRepository.save(cartera);
+    }
 }

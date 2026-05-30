@@ -48,4 +48,16 @@ public class CarteraController {
         List<Cartera> carteras = carteraService.obtenerCarterasDeUsuario(usuarioId);
         return ResponseEntity.ok(carteras);
     }
+
+    // Modificar el saldo de una cryptomoneda existente en cartera.
+    @PutMapping("/usuario/{usuarioId}/modificar")
+    public ResponseEntity<Cartera> modificarSaldo(
+        @PathVariable("usuarioId") Long usuarioId,
+        @RequestParam("simboloMoneda") String simboloMoneda,
+        @RequestParam("monto") Double monto) {
+            
+            Cartera carteraActualizada = carteraService.modificarSaldo(usuarioId, simboloMoneda, monto);
+            return ResponseEntity.ok(carteraActualizada);
+        }
+
 }

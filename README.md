@@ -1,71 +1,106 @@
-# Crypto Exchange REST API
+# Crypto Exchange — REST API
 
-![Java](https://img.shields.io/badge/Java-17+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
-![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white)
+A secure REST API simulating the backend engine of a cryptocurrency exchange 
+platform. Users manage fiat and crypto wallets and execute buy/sell orders 
+against real-time market prices from Binance. Built as the backend for 
+[crypto-dashboard](https://github.com/josemanueldg02-star/crypto-dashboard).
 
-Una API RESTful robusta y segura que simula el motor central (backend) de una plataforma de intercambio de criptomonedas (Exchange). Permite a los usuarios gestionar carteras de dinero fiat y criptomonedas, interactuando con precios reales del mercado.
-
-## Características Principales
-
-* **Seguridad Avanzada (Spring Security + JWT):** Sistema de autenticación *stateless* basado en JSON Web Tokens. Rutas protegidas mediante filtros de autorización en cada petición.
-* **Integración con Mercado Real:** Conexión con la API pública de **Binance** mediante `RestTemplate` para obtener el tipo de cambio en tiempo real al ejecutar operaciones de compra/venta.
-* **Transacciones ACID:** Operaciones financieras protegidas con la anotación `@Transactional` de Spring, garantizando la consistencia de la base de datos (PostgreSQL) ante cualquier fallo durante el cruce de divisas.
-* **Manejo Global de Excepciones:** Respuestas de error estandarizadas e interceptadas a través de `@ControllerAdvice`, ofreciendo JSON limpios y códigos HTTP adecuados (ej. `400 Bad Request` por saldo insuficiente).
-* **Arquitectura Limpia:** Estructura multicapa (Controller, Service, Repository, Model, Security, Exception) facilitando la escalabilidad y el mantenimiento.
-
-## Stack Tecnológico
-
-* **Lenguaje:** Java 17
-* **Framework:** Spring Boot 3
-* **Persistencia de Datos:** Spring Data JPA / Hibernate
-* **Base de Datos:** PostgreSQL
-* **Ciberseguridad:** Spring Security, io.jsonwebtoken (JWT)
-* **Peticiones HTTP Externas:** RestTemplate
-
-## Endpoints Principales
-
-### 🔐 Autenticación
-| Método | Ruta | Descripción | Seguridad |
-|---|---|---|---|
-| `POST` | `/api/auth/login` | Inicia sesión y devuelve el Token JWT | Público |
-
-### Gestión de Carteras
-| Método | Ruta | Descripción | Seguridad |
-|---|---|---|---|
-| `GET` | `/api/carteras/usuario/{id}` | Lista los balances (Fiat/Cripto) de un usuario | Requiere JWT |
-
-### Motor Financiero
-| Método | Ruta | Descripción | Seguridad |
-|---|---|---|---|
-| `POST` | `/api/transacciones/deposito/cartera/{id}` | Inyecta dinero fiat desde el banco | Requiere JWT |
-| `POST` | `/api/transacciones/retiro/cartera/{id}` | Retira fondos fiat hacia el banco | Requiere JWT |
-| `POST` | `/api/transacciones/comprar/usuario/{id}` | Compra criptomonedas con precio en tiempo real | Requiere JWT |
-| `POST` | `/api/transacciones/vender/usuario/{id}` | Vende criptomonedas con precio en tiempo real | Requiere JWT |
-
-*(Nota: En todas las rutas protegidas, es necesario enviar la cabecera `Authorization: Bearer <token>`)*
-
-## Instalación y Despliegue Local
-
-1. **Clonar el repositorio:**
-   ```bash
-   git clone [https://github.com/josemanueldg02-star/crypto-api.git](https://github.com/josemanueldg02-star/crypto-api.git)
-   cd crypto-api
-   ```
-
-2. **Configurar la base de datos:**
-   Asegúrate de tener PostgreSQL instalado y en ejecución. Crea una base de datos llamada `crypto_portfolio` (o ajusta las credenciales en `src/main/resources/application.properties`).
-
-3. **Ejecutar la aplicación:**
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-
-4. **Credenciales de prueba por defecto:**
-   * **Usuario:** `josemanuel`
-   * **Contraseña:** `admin123`
+[![Java](https://img.shields.io/badge/Java-17-orange)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3-green)](https://spring.io/projects/spring-boot)
+[![Spring Security](https://img.shields.io/badge/Spring%20Security-JWT-green)](https://spring.io/projects/spring-security)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-latest-336791)](https://www.postgresql.org/)
+[![Binance API](https://img.shields.io/badge/Binance-API-F0B90B)](https://binance-docs.github.io/apidocs/)
 
 ---
-*Desarrollado como proyecto de portfolio para demostrar arquitecturas backend sólidas, integración de APIs de terceros y estándares de ciberseguridad.*
+
+## Features
+
+- **Stateless JWT authentication** — every protected route validates the token 
+via a custom filter; no server-side sessions
+- **Real-time pricing** — buy/sell orders fetch live prices from the Binance 
+public API via `RestTemplate` at execution time
+- **ACID transactions** — all financial operations are wrapped in `@Transactional` 
+to guarantee database consistency on failure
+- **Global exception handling** — `@ControllerAdvice` intercepts all errors and 
+returns standardized JSON responses with appropriate HTTP status codes
+
+---
+
+## Tech Stack
+
+- **Java 17**, Spring Boot 3
+- **Security:** Spring Security + `io.jsonwebtoken` (JWT)
+- **Persistence:** Spring Data JPA / Hibernate + PostgreSQL
+- **External API:** Binance REST API via `RestTemplate`
+- **Architecture:** Controller → Service → Repository → Model
+
+---
+
+## API Reference
+
+**Authentication**
+
+| Method | Route | Description | Auth |
+|--------|-------|-------------|------|
+| `POST` | `/api/auth/login` | Returns JWT token | Public |
+
+**Wallets**
+
+| Method | Route | Description | Auth |
+|--------|-------|-------------|------|
+| `GET` | `/api/carteras/usuario/{id}` | List fiat and crypto balances | JWT |
+
+**Transactions**
+
+| Method | Route | Description | Auth |
+|--------|-------|-------------|------|
+| `POST` | `/api/transacciones/deposito/cartera/{id}` | Deposit fiat funds | JWT |
+| `POST` | `/api/transacciones/retiro/cartera/{id}` | Withdraw fiat funds | JWT |
+| `POST` | `/api/transacciones/comprar/usuario/{id}` | Buy crypto at live price | JWT |
+| `POST` | `/api/transacciones/vender/usuario/{id}` | Sell crypto at live price | JWT |
+
+All protected routes require the header: `Authorization: Bearer <token>`
+
+---
+
+## Technical Highlights
+
+- **Custom JWT filter.** A `OncePerRequestFilter` validates and extracts the 
+token on every request, keeping authentication logic decoupled from business logic.
+- **Live price injection.** Buy/sell endpoints call the Binance API at order 
+execution time, so the price used is always the current market rate.
+- **Layered exception model.** Domain exceptions (e.g. insufficient funds) 
+propagate cleanly to `@ControllerAdvice`, which maps them to `400 Bad Request` 
+with a descriptive JSON body.
+
+---
+
+## Running Locally
+
+**Prerequisites:** Java 17, Maven, PostgreSQL
+
+```bash
+git clone https://github.com/josemanueldg02-star/crypto-api.git
+cd crypto-api
+```
+
+Create a database named `crypto_portfolio` in PostgreSQL, then configure 
+credentials in `src/main/resources/application.properties`.
+
+```bash
+./mvnw spring-boot:run
+```
+
+API available at `http://localhost:8080`.
+
+**Test credentials:**
+- Username: `josemanuel`
+- Password: `admin123`
+
+To use with the frontend, also run [crypto-dashboard](https://github.com/josemanueldg02-star/crypto-dashboard).
+
+---
+
+## Author
+
+**José Manuel Domínguez García** · [@josemanueldg02-star](https://github.com/josemanueldg02-star)
